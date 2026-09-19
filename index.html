@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 21st Birthday, My Love 💕</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Outfit:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #fff5f7 0%, #fde2e4 50%, #fac1d0 100%);
+            color: #4a2834;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2rem 1rem;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .heart-particle {
+            position: fixed;
+            color: rgba(224, 86, 122, 0.35);
+            pointer-events: none;
+            animation: floatSlow 12s infinite ease-in-out;
+            z-index: 0;
+            user-select: none;
+        }
+
+        @keyframes floatSlow {
+            0% { 
+                transform: translateY(105vh) rotate(0deg) scale(0.8); 
+                opacity: 0; 
+            }
+            30% { 
+                opacity: 0.65; 
+            }
+            70% { 
+                opacity: 0.65; 
+            }
+            100% { 
+                transform: translateY(-15vh) rotate(45deg) scale(1.2); 
+                opacity: 0; 
+            }
+        }
+
+        .envelope-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(45, 20, 28, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.7s ease;
+            padding: 1.5rem;
+        }
+
+        .envelope-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .envelope-container {
+            position: relative;
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Envelope closed view */
+        .envelope-card {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            background: #f1a7bc;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(184, 37, 95, 0.4);
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+            overflow: visible;
+        }
+
+        .envelope-card:hover {
+            transform: scale(1.04) translateY(-4px);
+        }
+
+        .envelope-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
+            border-left: 160px solid #f8bad0;
+            border-right: 160px solid #f8bad0;
+            border-bottom: 110px solid #f3b0c3;
+            border-top: 110px solid transparent;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            pointer-events: none;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 120px solid #e082a0;
+            transform-origin: top;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 4;
+        }
+
+        .envelope-seal {
+            position: absolute;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #b8255f 0%, #d81b60 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+            z-index: 5;
+            box-shadow: 0 6px 16px rgba(184, 37, 95, 0.4);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .envelope-card:hover .envelope-seal {
+            transform: translateX(-50%) scale(1.15);
+        }
+
+        .envelope-prompt {
+            margin-top: 1.8rem;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            text-align: center;
+            animation: pulse 2s infinite ease-in-out;
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.85; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.03); }
+        }
+
+        /* Revealed Letter Sheet */
+        .letter-modal {
+            position: absolute;
+            width: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2.2rem 1.8rem 1.8rem 1.8rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+            border: 2px solid #fce4ec;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: scale(0.85) translateY(20px);
+            pointer-events: none;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 10;
+        }
+
+        .envelope-container.opened .envelope-card,
+        .envelope-container.opened .envelope-prompt {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.8);
+        }
+
+        .envelope-container.opened .letter-modal {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+
+        .letter-scrollable {
+            overflow-y: auto;
+            padding-right: 8px;
+            flex-grow: 1;
+        }
+
+        .letter-scrollable::-webkit-scrollbar {
+            width: 6px;
+        }
+        .letter-scrollable::-webkit-scrollbar-thumb {
+            background: #f3b0c3;
+            border-radius: 10px;
+        }
+
+        .letter-title {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 600;
+            color: #b8255f;
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+
+        .letter-body {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #5c3846;
+            font-weight: 300;
+        }
+
+        .letter-body p {
+            margin-bottom: 1rem;
+        }
+
+        .letter-signature {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: #b8255f;
+            text-align: right;
+            margin-top: 1rem;
+            padding-right: 0.5rem;
+        }
+
+        .letter-action-btn {
+            background: linear-gradient(135deg, #b8255f 0%, #d81b60 100%);
+            color: #ffffff;
+            border: none;
+            padding: 0.85rem 1.8rem;
+            border-radius: 30px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            align-self: center;
+            box-shadow: 0 6px 20px rgba(184, 37, 95, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .letter-action-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(184, 37, 95, 0.45);
+        }
+
+        header {
+            text-align: center;
+            z-index: 10;
+            max-width: 650px;
+            padding: 0 1rem;
+            margin-top: 0.5rem;
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 600;
+            font-size: 2.7rem;
+            color: #b8255f;
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 10px rgba(184, 37, 95, 0.12);
+        }
+
+        header p {
+            font-size: 1.05rem;
+            color: #7a4356;
+            font-weight: 300;
+            line-height: 1.5;
+            letter-spacing: 0.2px;
+        }
+
+        .deck-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 1050px;
+            height: 340px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1.5rem 0;
+            z-index: 5;
+        }
+
+        .deck-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.8s ease;
+        }
+
+        .deck-container.spread {
+            justify-content: flex-start;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 20px 30px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .deck-container.spread::-webkit-scrollbar {
+            height: 6px;
+        }
+        .deck-container.spread::-webkit-scrollbar-thumb {
+            background: #f3b0c3;
+            border-radius: 10px;
+        }
+
+        .card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 125px;
+            height: 170px;
+            background: #ffffff;
+            padding: 6px 6px 26px 6px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(184, 37, 95, 0.15);
+            cursor: pointer;
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, position 1.2s;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+            pointer-events: none;
+        }
+
+        .card-title {
+            position: absolute;
+            bottom: 6px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 0.75rem;
+            color: #9e2a52;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 4px;
+        }
+
+        /* Initial Stacked Rotations */
+        .card:nth-child(1)  { transform: translate(-50%, -50%) rotate(-8deg); }
+        .card:nth-child(2)  { transform: translate(-50%, -50%) rotate(5deg); }
+        .card:nth-child(3)  { transform: translate(-50%, -50%) rotate(-3deg); }
+        .card:nth-child(4)  { transform: translate(-50%, -50%) rotate(7deg); }
+        .card:nth-child(5)  { transform: translate(-50%, -50%) rotate(-5deg); }
+        .card:nth-child(6)  { transform: translate(-50%, -50%) rotate(4deg); }
+        .card:nth-child(7)  { transform: translate(-50%, -50%) rotate(-6deg); }
+        .card:nth-child(8)  { transform: translate(-50%, -50%) rotate(2deg); }
+        .card:nth-child(9)  { transform: translate(-50%, -50%) rotate(-7deg); }
+        .card:nth-child(10) { transform: translate(-50%, -50%) rotate(6deg); }
+        .card:nth-child(11) { transform: translate(-50%, -50%) rotate(-2deg); }
+        .card:nth-child(12) { transform: translate(-50%, -50%) rotate(8deg); }
+        .card:nth-child(13) { transform: translate(-50%, -50%) rotate(-4deg); }
+        .card:nth-child(14) { transform: translate(-50%, -50%) rotate(3deg); }
+        .card:nth-child(15) { transform: translate(-50%, -50%) rotate(-6deg); }
+        .card:nth-child(16) { transform: translate(-50%, -50%) rotate(5deg); }
+        .card:nth-child(17) { transform: translate(-50%, -50%) rotate(-3deg); }
+        .card:nth-child(18) { transform: translate(-50%, -50%) rotate(7deg); }
+        .card:nth-child(19) { transform: translate(-50%, -50%) rotate(-5deg); }
+        .card:nth-child(20) { transform: translate(-50%, -50%) rotate(4deg); }
+        .card:nth-child(21) { transform: translate(-50%, -50%) rotate(0deg); }
+
+        .deck-container.spread .card {
+            position: relative;
+            top: auto;
+            left: auto;
+            transform: none !important;
+            margin-right: 16px;
+        }
+
+        .deck-container.spread .card:nth-child(1)  { transition-delay: 0.03s; }
+        .deck-container.spread .card:nth-child(2)  { transition-delay: 0.06s; }
+        .deck-container.spread .card:nth-child(3)  { transition-delay: 0.09s; }
+        .deck-container.spread .card:nth-child(4)  { transition-delay: 0.12s; }
+        .deck-container.spread .card:nth-child(5)  { transition-delay: 0.15s; }
+        .deck-container.spread .card:nth-child(6)  { transition-delay: 0.18s; }
+        .deck-container.spread .card:nth-child(7)  { transition-delay: 0.21s; }
+        .deck-container.spread .card:nth-child(8)  { transition-delay: 0.24s; }
+        .deck-container.spread .card:nth-child(9)  { transition-delay: 0.27s; }
+        .deck-container.spread .card:nth-child(10) { transition-delay: 0.30s; }
+        .deck-container.spread .card:nth-child(11) { transition-delay: 0.33s; }
+        .deck-container.spread .card:nth-child(12) { transition-delay: 0.36s; }
+        .deck-container.spread .card:nth-child(13) { transition-delay: 0.39s; }
+        .deck-container.spread .card:nth-child(14) { transition-delay: 0.42s; }
+        .deck-container.spread .card:nth-child(15) { transition-delay: 0.45s; }
+        .deck-container.spread .card:nth-child(16) { transition-delay: 0.48s; }
+        .deck-container.spread .card:nth-child(17) { transition-delay: 0.51s; }
+        .deck-container.spread .card:nth-child(18) { transition-delay: 0.54s; }
+        .deck-container.spread .card:nth-child(19) { transition-delay: 0.57s; }
+        .deck-container.spread .card:nth-child(20) { transition-delay: 0.60s; }
+        .deck-container.spread .card:nth-child(21) { transition-delay: 0.63s; }
+
+        .deck-container.spread .card:hover {
+            z-index: 50 !important;
+            transform: scale(1.08) translateY(-8px) !important;
+            box-shadow: 0 12px 28px rgba(184, 37, 95, 0.3);
+        }
+
+        .instruction-btn {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(5px);
+            color: #b8255f;
+            border: 1px solid #f3b0c3;
+            padding: 0.75rem 1.8rem;
+            border-radius: 25px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 400;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(184, 37, 95, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            z-index: 10;
+        }
+
+        .instruction-btn:hover {
+            background: #b8255f;
+            color: #ffffff;
+            border-color: #b8255f;
+            box-shadow: 0 6px 20px rgba(184, 37, 95, 0.25);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(45, 20, 28, 0.82);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 18px;
+            max-width: 460px;
+            width: 88%;
+            padding: 1.4rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transform: scale(0.85);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: center;
+            border: 2px solid #fce4ec;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-img-wrapper {
+            overflow: hidden;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .modal-img {
+            width: 100%;
+            max-height: 320px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s ease;
+        }
+
+        .modal-img:hover {
+            transform: scale(1.05);
+        }
+
+        .modal h3 {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: #a31d4e;
+            font-size: 1.5rem;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+        }
+
+        .modal p {
+            font-size: 0.92rem;
+            color: #5c3846;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ffffff;
+            color: #a31d4e;
+            border: 1px solid #f3b0c3;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: #fce4ec;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="heart-particle" style="left: 5%; animation-delay: 0s; font-size: 1rem;">🌸</div>
+    <div class="heart-particle" style="left: 15%; animation-delay: 4s; font-size: 1.4rem;">💗</div>
+    <div class="heart-particle" style="left: 28%; animation-delay: 2s; font-size: 1.1rem;">💖</div>
+    <div class="heart-particle" style="left: 42%; animation-delay: 7s; font-size: 0.9rem;">✨</div>
+    <div class="heart-particle" style="left: 55%; animation-delay: 1s; font-size: 1.3rem;">🌸</div>
+    <div class="heart-particle" style="left: 68%; animation-delay: 5s; font-size: 1rem;">💕</div>
+    <div class="heart-particle" style="left: 78%; animation-delay: 3s; font-size: 1.5rem;">💗</div>
+    <div class="heart-particle" style="left: 88%; animation-delay: 8s; font-size: 0.9rem;">✨</div>
+    <div class="heart-particle" style="left: 95%; animation-delay: 6s; font-size: 1.2rem;">💖</div>
+    <div class="heart-particle" style="left: 50%; animation-delay: 9s; font-size: 1.1rem;">🌷</div>
+
+    <div class="envelope-overlay" id="envelopeOverlay">
+        <div class="envelope-container" id="envelopeContainer">
+            
+            <!-- Sealed Envelope -->
+            <div class="envelope-card" onclick="openEnvelope()">
+                <div class="envelope-flap"></div>
+                <div class="envelope-seal">💕</div>
+            </div>
+            <div class="envelope-prompt" id="envelopePrompt">Tap the envelope to open 💌</div>
+
+            <!-- Formatted Letter Sheet -->
+            <div class="letter-modal" id="letterModal">
+                <div class="letter-scrollable">
+                    <h2 class="letter-title">To My Ame...</h2>
+                    <div class="letter-body">
+                        <!-- PASTE YOUR CUSTOM LETTER HERE -->
+                        <p>Happy 21st Birthday, my love!</p>
+                        <p>I just want to take this time to tell you how incredibly strong and beautiful you are, both inside and out. It has been more than a year since we met and started to share our special moments together, and every single day with you feels like a blessing. 
+                        <p>Please remember that in everything you do, do it all out of love deep in your heart. I'll always be here cheering you on, supporting you, and loving you wholeheartedly. Never forget that I am always here for you—to guide you through the tough times, help you reach your dreams, and protect you no matter what.</p>
+                        <p>Happy birthday, my Ame! I love you always, in all ways!</p>
+                        <p>I gathered 21 precious memories to mark your 21 amazing years. Each card is a little piece of our journey together, filled with smiles, laughter, and love.</p>
+                        <p>I hope this brings a big smile to your face today. Here's to Chapter 21!</p>
+                    </div>
+                    <div class="letter-signature">Forever Yours, Wawan❤️</div>
+                </div>
+                <button class="letter-action-btn" onclick="revealMemories(event)">Open Your 21 Memories 💕</button>
+            </div>
+
+        </div>
+    </div>
+
+    <header>
+        <h1>Happy 21st Birthday, My Love</h1>
+        <p>21 years of bringing beauty to this world, and 21 sweet pictures that I will hold close forever.</p>
+    </header>
+
+    <div class="deck-wrapper">
+        <div class="deck-container" id="deck" onclick="spreadDeck()">
+            
+            <!-- Card 1 -->
+            <div class="card" style="z-index: 21;" onclick="openDetail(event, 'images/1.jpeg', 'Sweet & Silly Memories', 'Looking back at these cute little poses—you’ve always had that same playful spark that stole my heart.')">
+                <img src="images/1.jpeg" alt="Memory 1" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+1'"><div class="card-title">Silly Memories</div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="card" style="z-index: 20;" onclick="openDetail(event, 'images/2.jpeg', 'The Cutest Smile', 'Long before I knew you, you were already bringing so much sweetness into the world with that adorable smile.')">
+                <img src="images/2.jpeg" alt="Memory 2" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+2'"><div class="card-title">Cutest Smile</div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="card" style="z-index: 19;" onclick="openDetail(event, 'images/3.jpeg', 'Little Mischief', 'Proof that your playful energy and cute personality have been there right from the start.')">
+                <img src="images/3.jpeg" alt="Memory 3" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+3'"><div class="card-title">Little Mischief</div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="card" style="z-index: 18;" onclick="openDetail(event, 'images/4.jpeg', 'Radiant & Bright', 'Your smile in this pink floral dress shines brighter than any sunny day. You are pure joy.')">
+                <img src="images/4.jpeg" alt="Memory 4" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+4'"><div class="card-title">Radiant & Bright</div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="card" style="z-index: 17;" onclick="openDetail(event, 'images/5.jpeg', 'Stunning & Graceful', 'Every time you look back like this, my heart skips a beat. You grow more gorgeous every single day.')">
+                <img src="images/5.jpeg" alt="Memory 5" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+5'"><div class="card-title">Graceful</div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="card" style="z-index: 16;" onclick="openDetail(event, 'images/6.jpeg', 'Soft & Gentle', 'Even in simple, candid moments, your beauty takes my breath away without even trying.')">
+                <img src="images/6.jpeg" alt="Memory 6" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+6'"><div class="card-title">Soft & Gentle</div>
+            </div>
+
+            <!-- Card 7 -->
+            <div class="card" style="z-index: 15;" onclick="openDetail(event, 'images/7.jpeg', 'Elegantly You', 'So effortless, so chic, and so incredibly beautiful. I am so lucky to call you mine.')">
+                <img src="images/7.jpeg" alt="Memory 7" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+7'"><div class="card-title">Elegantly You</div>
+            </div>
+
+            <!-- Card 8 -->
+            <div class="card" style="z-index: 14;" onclick="openDetail(event, 'images/8.jpeg', 'My Favorite Sight', 'Just an ordinary selfie to you, but to me, it\'s a reminder of the prettiest face I could look at forever.')">
+                <img src="images/8.jpeg" alt="Memory 8" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+8'"><div class="card-title">Favorite Sight</div>
+            </div>
+
+            <!-- Card 9 -->
+            <div class="card" style="z-index: 13;" onclick="openDetail(event, 'images/9.jpeg', 'Nighttime Magic', 'Sitting across from you under the night lights, seeing that gentle gaze... moments like this feel straight out of a dream.')">
+                <img src="images/9.jpeg" alt="Memory 9" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+9'"><div class="card-title">Nighttime Magic</div>
+            </div>
+
+            <!-- Card 10 -->
+            <div class="card" style="z-index: 12;" onclick="openDetail(event, 'images/10.jpeg', 'Chapter 21 Looks Beautiful on You', 'Matching blue stripes, pretty bangs, and that gorgeous look in your eyes. Happy 21st Birthday, my love—I adore you endlessly.')">
+                <img src="images/10.jpeg" alt="Memory 10" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+10'"><div class="card-title">Chapter 21</div>
+            </div>
+
+            <!-- Card 11 -->
+            <div class="card" style="z-index: 11;" onclick="openDetail(event, 'images/11.jpeg', 'Warm & Cozily Pretty', 'Standing in this warm wooden room, but honestly, the only thing catching my eye is how sweet and stunning you look.')">
+                <img src="images/11.jpeg" alt="Memory 11" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+11'"><div class="card-title">Cozily Pretty</div>
+            </div>
+
+            <!-- Card 12 -->
+            <div class="card" style="z-index: 10;" onclick="openDetail(event, 'images/12.jpeg', 'Nature’s Prettiest View', 'Surrounded by all those lush green trees, yet you still manage to be the most beautiful view in the entire frame.')">
+                <img src="images/12.jpeg" alt="Memory 12" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+12'"><div class="card-title">Prettiest View</div>
+            </div>
+
+            <!-- Card 13 -->
+            <div class="card" style="z-index: 9;" onclick="openDetail(event, 'images/13.jpeg', 'Holiday Warmth', 'All the Christmas lights and sweet treats on the table, but your glowing smile is still the best part of the season.')">
+                <img src="images/13.jpeg" alt="Memory 13" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+13'"><div class="card-title">Holiday Warmth</div>
+            </div>
+
+            <!-- Card 14 -->
+            <div class="card" style="z-index: 8;" onclick="openDetail(event, 'images/14.jpeg', 'Island Sun & You', 'Under the clear blue sky and ocean breeze, you look absolutely breathtaking. Pure tropical beauty.')">
+                <img src="images/14.jpeg" alt="Memory 14" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+14'"><div class="card-title">Island Sun</div>
+            </div>
+
+            <!-- Card 15 -->
+            <div class="card" style="z-index: 7;" onclick="openDetail(event, 'images/15.jpg', 'Sweet Flowers For You', 'Holding that cute pink bouquet with your gentle smile—nothing compares to how blooming and lovely you are.')">
+                <img src="images/15.jpg" alt="Memory 15" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+15'"><div class="card-title">Sweet Flowers</div>
+            </div>
+
+            <!-- Card 16 -->
+            <div class="card" style="z-index: 6;" onclick="openDetail(event, 'images/16.jpg', 'Nighttime Glow', 'Running a hand through your hair under the night sky... you make even simple, dark evenings look magical.')">
+                <img src="images/16.jpg" alt="Memory 16" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+16'"><div class="card-title">Nighttime Glow</div>
+            </div>
+
+            <!-- Card 17 -->
+            <div class="card" style="z-index: 5;" onclick="openDetail(event, 'images/17.jpg', 'Golden Hour Peace', 'Sitting on the grass as the sun sets, looking so soft, calm, and effortlessly stunning. I love this quiet side of you.')">
+                <img src="images/17.jpg" alt="Memory 17" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+17'"><div class="card-title">Golden Hour</div>
+            </div>
+
+            <!-- Card 18 -->
+            <div class="card" style="z-index: 4;" onclick="openDetail(event, 'images/18.jpg', 'Cute & Casual', 'Even in casual jeans on a blue bench, you have this natural charm that makes my heart skip a beat.')">
+                <img src="images/18.jpg" alt="Memory 18" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+18'"><div class="card-title">Cute & Casual</div>
+            </div>
+
+            <!-- Card 19 -->
+            <div class="card" style="z-index: 3;" onclick="openDetail(event, 'images/19.jpeg', 'Rosy & Gorgeous', 'That soft rosy blush and gorgeous gaze... I swear you get more mesmerizing every single day.')">
+                <img src="images/19.jpeg" alt="Memory 19" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+19'"><div class="card-title">Rosy & Gorgeous</div>
+            </div>
+
+            <!-- Card 20 -->
+            <div class="card" style="z-index: 2;" onclick="openDetail(event, 'images/20.jpeg', 'My Favorite Face', 'A close-up selfie of the prettiest face in the world. I could look into those sweet eyes forever.')">
+                <img src="images/20.jpeg" alt="Memory 20" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+20'"><div class="card-title">Favorite Face</div>
+            </div>
+
+            <!-- Card 21 -->
+            <div class="card" style="z-index: 1;" onclick="openDetail(event, 'images/21.jpg', 'Forever My Favorite Person', 'Holding your present with that adorable kissy face and glowing smile... seeing you happy is my favorite feeling in the world. Happy 21st Birthday, my love—I love you endlessly!')">
+                <img src="images/21.jpg" alt="Memory 21" onerror="this.src='https://placehold.co/400x500/fde2e4/b8255f?text=Memory+21'"><div class="card-title">Forever Person</div>
+            </div>
+
+        </div>
+    </div>
+
+    <button class="instruction-btn" id="actionBtn" onclick="toggleDeck()">Unfold 21 memories for you 💕</button>
+
+    <div id="detailModal" class="modal" onclick="closeModalOnOutsideClick(event)">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div class="modal-img-wrapper">
+                <img id="modalImg" class="modal-img" src="" alt="Detail View" onerror="this.src='https://placehold.co/800x600/fde2e4/b8255f?text=Memory+Photo'">
+            </div>
+            <h3 id="modalTitle">Title</h3>
+            <p id="modalDesc">Description text goes here.</p>
+        </div>
+    </div>
+
+    <script>
+        let isSpread = false;
+
+        function openEnvelope() {
+            const container = document.getElementById('envelopeContainer');
+            container.classList.add('opened');
+        }
+
+        function revealMemories(event) {
+            event.stopPropagation();
+            const overlay = document.getElementById('envelopeOverlay');
+            overlay.classList.add('hidden');
+        }
+
+        function toggleDeck() {
+            const deck = document.getElementById('deck');
+            const btn = document.getElementById('actionBtn');
+            isSpread = !isSpread;
+
+            if (isSpread) {
+                deck.classList.add('spread');
+                btn.innerText = 'Swipe or tap any memory to open 🔍';
+            } else {
+                deck.classList.remove('spread');
+                btn.innerText = 'Unfold 21 memories for you 💕';
+            }
+        }
+
+        function spreadDeck() {
+            if (!isSpread) {
+                toggleDeck();
+            }
+        }
+
+        function openDetail(event, imageSrc, title, description) {
+            if (!isSpread) return;
+            event.stopPropagation();
+
+            const modal = document.getElementById('detailModal');
+            document.getElementById('modalImg').src = imageSrc;
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDesc').innerText = description;
+
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('active');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('detailModal');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        function closeModalOnOutsideClick(event) {
+            if (event.target.classList.contains('modal')) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
